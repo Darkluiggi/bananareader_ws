@@ -7,8 +7,9 @@
       
       ></v-app-bar-nav-icon>
       <div class="d-flex align-center" style="cursor: pointer"> 
+      <img src="../../assets/logo.png" class="logo" />
       <label class="text-h5">
-                E-Tailor
+               BananaReader
              </label>
       </div>
       <v-spacer></v-spacer>
@@ -33,7 +34,7 @@
         <v-list-item link  >
           <v-list-item-content>
             <v-list-item-title class="text-h5" style="color:#fff">
-                E-Tailor
+               BananaReader_WS
              </v-list-item-title
             >
             <v-list-item-title class="text-h6" style="color:#fff" >
@@ -58,7 +59,7 @@
               <v-icon style="color:#fff">{{ item.icon }}</v-icon>
             </v-list-item-icon>
 
-            <v-list-item-content>
+            <v-list-item-content  >
               <v-list-item-title style="color:#fff">{{ item.title }}</v-list-item-title>
               
             </v-list-item-content>
@@ -113,7 +114,7 @@
 import HeaderBarLinks from "./HeaderBarLinks";
 export default {
     
-    name:'Menu-Component',
+    name:'Menu',
     components: {
         HeaderBarLinks,
   },
@@ -136,10 +137,19 @@ export default {
       items: [
         {
           title: "Dashboard",
-          icon: "mdi-home",          
+          icon: "mdi-home",
+          rol: ["admin", "Cliente", "Tailor"],
           action: this.goToDashboard,
-        }, 
+        },
+        {
+          title: "Usuarios",
+          icon: "mdi-account-box",
+          rol: ["admin" ],
+          action: this.goToUsers,
+        },     
+       
       ],
+      messages: 1,
     };
   },
   methods:{
@@ -154,16 +164,29 @@ export default {
       },
       goToDashboard(){
         return this.$router.push("/");
-     
+      },
+      goToRoles(){
+        return this.$router.push("/Roles");
+      },
+      goToUsers(){
+        return this.$router.push("/Users");
+      },
   },
    mounted() {
    
     this.user= JSON.parse(localStorage.getItem('user'));
-   }
+   console.log(this.user.user)
+  },
+  created() {
+    this.user= JSON.parse(localStorage.getItem('user'));
+    
+    if(this.user.user.rol.nombre=="Tailor"){
+     this.appointmentList = this.getList(this.user.user.id);
+    }
+    
+  }
 
-},
 }
-
 </script>
 
 <style>
@@ -230,5 +253,9 @@ export default {
     background: #4AAE9B;
     border: 1px solid #4AAE9B;
     border-radius: 2px;
+  }
+  .logo {
+    width: 40px;
+    height: auto;
   }
 </style>

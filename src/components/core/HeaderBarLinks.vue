@@ -1,25 +1,22 @@
 <template>
   <div class="container-fluid">
     <div class="row">
-      <v-container>        
-        <div>           
+      <v-container>
+        <div>
           <v-spacer></v-spacer>
-          <v-btn
-            x-small
-            @click="goToLog()"
-            text
-          >
+          <v-btn x-small v-if="!this.user.authorized" @click="goToLog()" text>
             <span>Ingresar</span>
           </v-btn>
-           <v-btn
-            x-small              
+          <v-btn
+            x-small
+            v-if="!this.user.authorized"
             text
             @click="goToRegistration()"
           >
             <span>Registrarse</span>
           </v-btn>
 
-          <v-card-actions >
+          <v-card-actions v-if="this.user.authorized">
             <v-menu auto offset-y>
               <template v-slot:activator="{ on }">
                 <v-btn
@@ -39,19 +36,11 @@
                     <v-icon> mdi-account </v-icon>
                   </v-list-item-icon>
                   <v-list-item-content>
-                    <!-- <v-list-item-title>{{ this.user.user.name }}</v-list-item-title> -->
+                    <v-list-item-title>{{
+                      this.user.user.name
+                    }}</v-list-item-title>
                   </v-list-item-content>
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-icon>
-                    <button @click="goToSchedule()">
-                      <v-icon> mdi-calendar </v-icon>
-                    </button>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <button @click="goToSchedule()">Citas</button>
-                  </v-list-item-content>
-                </v-list-item>
+                </v-list-item>                  
                 <v-list-item>
                   <v-list-item-icon>
                     <button @click="signOut()">
@@ -65,61 +54,44 @@
               </v-list>
             </v-menu>
           </v-card-actions>
-
         </div>
       </v-container>
     </div>
   </div>
 </template>
 
-
-
-
-
-
-
-
-
-
-
-
 <script>
-
-import router from '../../router';
-import User from "../../Entity/Auth.js"
+import router from "../../router";
+import User from "../../Entity/Auth.js";
 
 export default {
-    name: "HeaderBarLinks",
-    methods:{
-        goToRegistration(){
-        return router.push("/Registration");
+  name: "HeaderBarLinks",
+  methods: {
+    goToRegistration() {
+      return router.push("/Registration");
     },
-        goToLog(){
-        return router.push("/Login");
-    }, 
-        goToSchedule(){
-        return this.$router.push("/ScheduleList");
-      },
-
-
-        signOut(){
-        var user = new User();
-         localStorage.user=JSON.stringify(user);
-         router.go();
-         router.push({ name: "Home2", params: { reload: true } });
-        
-        }
+    goToLog() {
+      return router.push("/Login");
     },
-   mounted() {
-    this.user= JSON.parse(localStorage.getItem('user'));
-    
+    goToSchedule() {
+      return this.$router.push("/ScheduleList");
+    },
+
+    signOut() {
+      var user = new User();
+      localStorage.user = JSON.stringify(user);
+      router.go();
+      router.push({ name: "Home2", params: { reload: true } });
+    },
+  },
+  mounted() {
+    this.user = JSON.parse(localStorage.getItem("user"));
   },
 
   data() {
     return {
-      user: JSON.parse(localStorage.getItem('user')),  
+      user: JSON.parse(localStorage.getItem("user")),
     };
   },
-     
 };
 </script>

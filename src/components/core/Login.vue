@@ -50,7 +50,7 @@ import router from '../../router';
 import AuthDAS from'../../services/AuthDAS';
 
 export default ({
-    name: "Login-Component",
+    name: "Login",
      data() {
     return {
       show1: false,

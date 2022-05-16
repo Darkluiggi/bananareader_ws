@@ -1,50 +1,48 @@
 <template>
-<body>
-  <div class="submit-form mt-3 mx-auto">
+<div >
+   <v-btn text style="cursor: pointer" @click="Volver()">
+                <v-icon>mdi-arrow-left-bold</v-icon>
+                <span>Volver</span>
+    </v-btn>
+  <div class="submit-form mt-6 mx-auto">
     <p class="headline">Nuevo usuario</p>
-
+    
     <div v-if="!submitted">
+      
       <v-form ref="form" >
-        <p v-if="errors.length">
-    <b>Por favor, corrija el(los) siguiente(s) error(es):</b>
-    <ul>
-      <li v-for="error in errors" :key="error" style="color:red;text-decoration: underline">{{ error }}</li>
-    </ul>
-  </p>
-        
         <v-text-field
           v-model="user.name"
-          :rules="[(v) => !!v || 'Nombre is required']"
+          :rules="[(v) => !!v || 'El nombre es requerido']"
           label="Nombre"
           required
         ></v-text-field>
 
         <v-text-field
           v-model="user.email"
-          :rules="[(v) =>  /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'Email must be valid']"
-          label="Correo Electronico"
+          :rules="[(v) => v.length > 0 && /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'el email debe ser válido']"
+          label="Email"
           required
         ></v-text-field>
 
         <v-text-field
           v-model="user.password"
-          :rules="[(v) => !!v || 'password is required']"
+          type="password"
+          :rules="[(v) => !!v || 'La contraseña es requerida']"
           label="Password"
           required
-          :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"          
-          :type="show1 ? 'text' : 'password'"
-           @click:append="show1 = !show1"
         ></v-text-field>
 
         <v-text-field
           v-model="user.phoneNumber"
-          :rules="[(v) => !!v || 'phone is required']"
-          label="Telefono Celular"
-         
+          :rules="[(v) => !!v || 'El teléfono es requerido']"
+          label="Número de teléfono"
+          required
         ></v-text-field>
+        <v-select :items="roles" item-text="nombre" item-value="id" 
+        single-line auto v-model="user.idRol" label="Seleccionar rol"></v-select>
       </v-form>
 
-      <v-btn color="primary" class="mt-3" @click="checkForm">Submit</v-btn>
+      <v-btn color="primary" class="mt-3" @click="saveUser">Submit</v-btn>
     </div>
 
     <div v-else>
@@ -63,7 +61,7 @@
       </v-card>
     </div>
   </div>
-</body>
+</div>
 </template>
 
 <script>
@@ -75,48 +73,27 @@ export default {
   name: "add-user",
   data() {
     return {
-      show1: false,
-      user:{
+      user: {
         user
-      },   
-      errors:[],   
+      },  
+      roles: [],
+      select: null,
       submitted: false,
     };
   },
-
+  mounted(){
+    this.getRoles();   
+  },
   methods: {
-    checkForm() {
-      if (this.user.email && this.user.password && this.user.name ) {
-        this.saveUser();
-      }
-
-      this.errors = [];
-       if (!this.user.name) {
-        this.errors.push('El nombre es obligatorio.');
-      }
-
-      if (!this.user.email) {
-        this.errors.push('El correo es obligatorio.');
-      }
-      if (!this.user.password) {
-        this.errors.push('La contraseña es obligatoria.');
-      }
-
-      
-    },
     saveUser() {
-      var Rol = "Cliente";
-     
-        RolDAS.GetByName(Rol).then((response) => {
-        console.log(response);
-          var data = {
+      var data = {
         name: this.user.name,
         email: this.user.email,
         password: this.user.password,
         phoneNumber: this.user.phoneNumber,
-        idRol: response.data.id ,
+        idRol: this.user.idRol,
       };
-      console.log(data)
+      
       UserDAS.create(data)
         .then((response) => {
           this.user.id = response.data.id;
@@ -126,18 +103,24 @@ export default {
         .catch((e) => {
           console.log(e);
         });
+    },
+
+    newUser() {
+      this.submitted = false;
+      this.user = {};
+    },
+     Volver(){
+      return this.$router.push("/Users");
+    },
+    getRoles(){
+      RolDAS.getAll()
+        .then((response) => {
+          this.roles = response.data;
         })
         .catch((e) => {
           console.log(e);
         });
-      this.$router.push({ name: "Home2", params: { reload: true } });
-    },
-
-    newUser() {
-      
-      this.submitted = false;
-      this.user = {};
-    },
+    }
   },
 };
 </script>
@@ -145,12 +128,11 @@ export default {
 <style>
 .submit-form {
   max-width: 300px;
-  margin: 3rem auto;
+  margin: auto;
   display: flex;
   flex-direction: column;
-  background:white;
+  background: white;
   padding: 40px;
   box-shadow: 0 4px 10px 4px rgba(0, 0, 0, 0.3);
 }
-
 </style>
