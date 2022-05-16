@@ -9,7 +9,7 @@
       <div class="d-flex align-center" style="cursor: pointer"> 
       <img src="../../assets/logo.png" class="logo" />
       <label class="text-h5">
-               BananaReader
+               Banana Reader
              </label>
       </div>
       <v-spacer></v-spacer>
@@ -34,7 +34,7 @@
         <v-list-item link  >
           <v-list-item-content>
             <v-list-item-title class="text-h5" style="color:#fff">
-               BananaReader_WS
+               Banana Reader
              </v-list-item-title
             >
             <v-list-item-title class="text-h6" style="color:#fff" >
