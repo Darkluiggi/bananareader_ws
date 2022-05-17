@@ -40,6 +40,21 @@
     </div>
 
   </div>
+    <div>
+    <div class="flex flex-column mt3">
+      <input
+        class="mb2"
+        v-model="link.description"
+        type="text"
+        placeholder="A description for the link">
+      <input
+        class="mb2"
+        v-model="link.url"
+        type="text"
+        placeholder="The URL for the link">
+    </div>
+    <button @click="createLink()">Submit</button>
+  </div>
  
 </body>  
 </template>
@@ -48,6 +63,7 @@
 <script>
 import router from '../../router';
 import AuthDAS from'../../services/AuthDAS';
+import AuthGraphQL from '../../services/AuthGraphQL';
 
 export default ({
     name: "Login",
@@ -57,6 +73,10 @@ export default ({
       user: {
        email:"",
        password:""
+      },
+      link:{
+        description:'',
+        url:''
       },
        errors:[]  
     };
@@ -106,6 +126,15 @@ export default ({
         .catch((e) => {
           console.log(e);
         });
+      },
+      createLink(){
+         var data = {
+        description: this.link.description,
+        url: this.link.url,
+      };
+      AuthGraphQL.createLink(data).then((response) =>{
+        console.log(response);
+      })
       }
     },
 })

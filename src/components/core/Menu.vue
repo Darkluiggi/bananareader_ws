@@ -165,9 +165,6 @@ export default {
       goToDashboard(){
         return this.$router.push("/");
       },
-      goToRoles(){
-        return this.$router.push("/Roles");
-      },
       goToUsers(){
         return this.$router.push("/Users");
       },
@@ -175,14 +172,9 @@ export default {
    mounted() {
    
     this.user= JSON.parse(localStorage.getItem('user'));
-   console.log(this.user.user)
   },
   created() {
-    this.user= JSON.parse(localStorage.getItem('user'));
-    
-    if(this.user.user.rol.nombre=="Tailor"){
-     this.appointmentList = this.getList(this.user.user.id);
-    }
+    this.user= JSON.parse(localStorage.getItem('user'));  
     
   }
 
