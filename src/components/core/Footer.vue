@@ -1,6 +1,6 @@
 <template>
   <div class="foot">
-  <p>2021 version alpha</p>  
+  <p>2022 version alpha</p>  
   </div>  
 </template>
 
