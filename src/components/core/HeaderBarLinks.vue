@@ -4,19 +4,19 @@
       <v-container>
         <div>
           <v-spacer></v-spacer>
-          <v-btn x-small v-if="!this.user.authorized" @click="goToLog()" text>
+          <v-btn x-small v-if="!this.user.ok" @click="goToLog()" text>
             <span>Ingresar</span>
           </v-btn>
           <v-btn
             x-small
-            v-if="!this.user.authorized"
+            v-if="!this.user.ok"
             text
             @click="goToRegistration()"
           >
             <span>Registrarse</span>
           </v-btn>
 
-          <v-card-actions v-if="this.user.authorized">
+          <v-card-actions v-if="this.user.ok">
             <v-menu auto offset-y>
               <template v-slot:activator="{ on }">
                 <v-btn
@@ -36,8 +36,8 @@
                     <v-icon> mdi-account </v-icon>
                   </v-list-item-icon>
                   <v-list-item-content>
-                    <v-list-item-title>{{
-                      this.user.user.name
+                    <v-list-item-title @click="goToProfile()">{{
+                      this.user.usuario.nombre
                     }}</v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>                  
@@ -73,8 +73,8 @@ export default {
     goToLog() {
       return router.push("/Login");
     },
-    goToSchedule() {
-      return this.$router.push("/ScheduleList");
+    goToProfile() {
+      return this.$router.push("/Profile");
     },
 
     signOut() {

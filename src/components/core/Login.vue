@@ -9,8 +9,8 @@
     <ul>
       <li v-for="error in errors" :key="error" style="color:red;text-decoration: underline">{{ error }}</li>
     </ul>
-    
-    
+
+
   </p>
     <div>
       <v-form ref="form" >
@@ -26,7 +26,7 @@
           :rules="[(v) => !!v || 'password is required']"
           v-model="user.password"
           required
-          :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"          
+          :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
           :type="show1 ? 'text' : 'password'"
            @click:append="show1 = !show1"
         ></v-text-field>
@@ -55,18 +55,18 @@
     </div>
     <button @click="addPost()">Submit</button>
   </div>
- 
-</body>  
+
+</body>
 </template>
 
 
 <script>
-// import router from '../../router';
+import router from '../../router';
 // import AuthDAS from '../../services/AuthDAS'
 import { LOGIN_MUTATION } from '../../constants/graqhql'
 
 export default ({
-    name: "Login",    
+    name: "Login",
      data() {
     return {
       show1: false,
@@ -82,18 +82,16 @@ export default ({
         title: '',
         body: ''
       },
-       errors:[]  
+       errors:[]
     };
   },
     methods: {
-      
+
     checkForm() {
-      if (this.user.email && this.user.password  ) {
-        this.login();
-      }
+
 
       this.errors = [];
-      
+
 
       if (!this.user.email) {
         this.errors.push('El correo es obligatorio.');
@@ -101,37 +99,39 @@ export default ({
       if (!/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(this.user.email)) {
         this.errors.push('El correo debe ser válido.');
       }
-      
+
       if (!this.user.password) {
         this.errors.push('La contraseña es obligatoria.');
       }
+       if (this.user.email && this.user.password  ) {
+        this.login();
+      }
 
-      
+
     },
       login(){
-      //  /*eslint-disable no-debugger*/
-      //  debugger
-      //  var data ={
-      //       password: this.user.password,
-      //       email: this.user.email,
-      //     };
-      //   AuthDAS.login(data).then((response) =>{
-      //     console.log(response);
-      //   });
-
-
        this.$apollo.mutate({
           mutation: LOGIN_MUTATION,
           variables: {
             password: this.user.password,
             email: this.user.email,
           }
-        }).then(r => console.log(r))
+        }).then(response => {
+
+          localStorage.user=JSON.stringify(response.data.login);
+          var user_= JSON.parse(localStorage.getItem('user'));
+            if(user_.ok){
+            router.push({ name: "Home2", params: { reload: true } });
+          }
+          else{        
+             this.errors.push(user_.message);  
+          }
+          })
 
         .catch(e => console.log(e))
       }
       },
-     
+
 })
 
 </script>

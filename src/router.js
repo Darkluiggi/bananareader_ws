@@ -22,9 +22,9 @@ export default new Router({
       component: Home
     },
     {
-      path: "/Users",
-      name: "users",
-      component: () => import("./components/Users/Index")
+      path: "/Profile",
+      name: "profile",
+      component: () => import("./components/Profile/Index")
     },    
     {
       path: "/Registration",
@@ -35,6 +35,11 @@ export default new Router({
       path: "/Login",
       name: "Login",
       component: () => import("./components/core/Login")
+    }, 
+    {
+      path: "/AddBook",
+      name: "AddBook",
+      component: () => import("./components/Profile/Add")
     }, 
   ]
 });

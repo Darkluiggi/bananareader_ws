@@ -5,6 +5,5 @@ export default class User {
     name;
     email;
     password;
-    idRol;
-    phoneNumber;   
+    role; 
 }
