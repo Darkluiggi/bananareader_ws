@@ -24,3 +24,27 @@ export const ALL_LINKS_QUERY = gql`
     }
   }
 `
+
+export const CREATE_POST_MUTATION = gql`
+      mutation (
+        $input: CreatePostInput!
+      ) {
+        createPost(input: $input) {
+          id
+          title
+          body
+        }
+      }
+`
+
+export const LOGIN_MUTATION = gql`
+mutation ($email: String!, $password: String!) {
+  login(email: $email, password: $password) {
+    token
+    usuario{
+      nombre
+      email
+    }
+  }
+}
+`

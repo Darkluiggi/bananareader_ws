@@ -1,12 +1,12 @@
-import http from "../http-common";
+import http from "../http-login";
 
 class AuthDAS {
   login(data) {
-    return http.post("/Auth/Login", data);
+    return http.post("/login", data);
   }
 
   register(data) {
-    return http.post("/Auth/Create", data);
+    return http.post("/register", data);
   }
 
   

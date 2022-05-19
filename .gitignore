@@ -1,1 +1,5 @@
 node_modules
+.vs/slnx.sqlite
+.vs/VSWorkspaceState.json
+.vs/bananareader_ws/v17/.suo
+.gitignore

@@ -44,16 +44,16 @@
     <div class="flex flex-column mt3">
       <input
         class="mb2"
-        v-model="link.description"
+        v-model="posts.title"
         type="text"
         placeholder="A description for the link">
       <input
         class="mb2"
-        v-model="link.url"
+        v-model="posts.body"
         type="text"
         placeholder="The URL for the link">
     </div>
-    <button @click="createLink()">Submit</button>
+    <button @click="addPost()">Submit</button>
   </div>
  
 </body>  
@@ -61,12 +61,12 @@
 
 
 <script>
-import router from '../../router';
-import AuthDAS from'../../services/AuthDAS';
-import AuthGraphQL from '../../services/AuthGraphQL';
+// import router from '../../router';
+// import AuthDAS from '../../services/AuthDAS'
+import { LOGIN_MUTATION } from '../../constants/graqhql'
 
 export default ({
-    name: "Login",
+    name: "Login",    
      data() {
     return {
       show1: false,
@@ -77,6 +77,10 @@ export default ({
       link:{
         description:'',
         url:''
+      },
+      posts:{
+        title: '',
+        body: ''
       },
        errors:[]  
     };
@@ -105,38 +109,29 @@ export default ({
       
     },
       login(){
-        var data = {
-        password: this.user.password,
-        email: this.user.email,
-      };
-       AuthDAS.login(data)
-        .then((response) => {
-          localStorage.user=JSON.stringify(response.data);
-          var user_= JSON.parse(localStorage.getItem('user'));
-          if(user_.message=="success"){
-            router.push({ name: "Home2", params: { reload: true } });
+      //  /*eslint-disable no-debugger*/
+      //  debugger
+      //  var data ={
+      //       password: this.user.password,
+      //       email: this.user.email,
+      //     };
+      //   AuthDAS.login(data).then((response) =>{
+      //     console.log(response);
+      //   });
+
+
+       this.$apollo.mutate({
+          mutation: LOGIN_MUTATION,
+          variables: {
+            password: this.user.password,
+            email: this.user.email,
           }
-          else{        
-             this.errors.push(user_.message);  
-          }
-                
-          
-          
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-      },
-      createLink(){
-         var data = {
-        description: this.link.description,
-        url: this.link.url,
-      };
-      AuthGraphQL.createLink(data).then((response) =>{
-        console.log(response);
-      })
+        }).then(r => console.log(r))
+
+        .catch(e => console.log(e))
       }
-    },
+      },
+     
 })
 
 </script>
