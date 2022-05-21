@@ -26,14 +26,10 @@
             Search
           </v-btn>
         </v-col>
-        <v-btn text style="cursor: pointer" @click="AddBook()">
-          <v-icon>mdi-plus</v-icon>
-          <span>Agregar audiolibro</span>
-        </v-btn>
 
         <v-col cols="12" sm="12">
           <v-card class="mx-auto" tile>
-            <v-card-title>Usuarios</v-card-title>
+            <v-card-title>Mis Libros</v-card-title>
             <v-spacer></v-spacer>
 
             <v-data-table
@@ -50,6 +46,11 @@
               </template>
             </v-data-table>
           </v-card>
+          
+        <v-btn text style="cursor: pointer" @click="AddBook()">
+          <v-icon>mdi-plus</v-icon>
+          <span>Agregar audiolibro</span>
+        </v-btn>
         </v-col>
       </div>
     </div>
@@ -66,11 +67,11 @@ export default {
       user: "",
       userName: "",
       headers: [
-        { text: "Nombre", align: "start", sortable: false, value: "nombre" },
-        { text: "Email", value: "email", sortable: false },
-        { text: "Teléfono", value: "phoneNumber", sortable: false },
-        { text: "Status", value: "status", sortable: false },
-        { text: "Actions", value: "actions", sortable: false },
+        { text: "Título", align: "start", sortable: false, value: "nombre" },
+        { text: "Autor(es)", value: "email", sortable: false },
+        { text: "Duración", value: "phoneNumber", sortable: false },
+        { text: "Leido por", value: "status", sortable: false },
+        { text: "Acciones", value: "actions", sortable: false },
       ],
     };
   },
