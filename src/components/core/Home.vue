@@ -35,24 +35,42 @@
 <script>
 export default {
   name: "Home",
-
-  mounted() {
-    this.user = JSON.parse(localStorage.getItem("user"));
-
-    if (this.$route.params.reload) {
-      this.$router.go();
-    }
-  },
-
   data() {
     return {
       user: JSON.parse(localStorage.getItem("user")),
     };
   },
-};
+  mounted() {
+    this.showLoading();
+    setTimeout(() => {
+    this.user = JSON.parse(localStorage.getItem("user"));
+    this.hideLoading();
+      }, 100);
+
+    if (this.$route.params.reload) {
+      this.$router.go();
+    }
+    
+  },
+  methods: {
+    hideLoading() {
+      var x = document.getElementById("loading");
+      x.style.display = "none";
+    },
+    showLoading() {
+      var x = document.getElementById("loading");
+      x.style.display = "flex";
+    },
+  },
+}
 </script>
 <style>
 .backgorund {
-  background: linear-gradient(135deg, rgb(255, 255, 255) 10%, rgb(0, 228, 19) 90%);
+  background: linear-gradient(
+    135deg,
+    rgb(255, 255, 255) 10%,
+    rgb(0, 228, 19) 90%
+  );
 }
+
 </style>

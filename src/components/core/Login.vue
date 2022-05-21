@@ -85,14 +85,14 @@ export default ({
        errors:[]
     };
   },
+   mounted() {
+   
+    this.hideLoading();
+  },
     methods: {
 
     checkForm() {
-
-
       this.errors = [];
-
-
       if (!this.user.email) {
         this.errors.push('El correo es obligatorio.');
       }
@@ -106,10 +106,9 @@ export default ({
        if (this.user.email && this.user.password  ) {
         this.login();
       }
-
-
     },
       login(){
+       this.showLoading();
        this.$apollo.mutate({
           mutation: LOGIN_MUTATION,
           variables: {
@@ -129,7 +128,15 @@ export default ({
           })
 
         .catch(e => console.log(e))
-      }
+      },
+    hideLoading() {
+      var x = document.getElementById("loading");
+      x.style.display = "none";
+    },
+    showLoading() {
+      var x = document.getElementById("loading");
+      x.style.display = "flex";
+    },
       },
 
 })

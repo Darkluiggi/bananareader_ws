@@ -1,8 +1,9 @@
 
 
 export default class User {
-    id;
-    name;
+    
+    user_id;
+    nombre;
     email;
     password;
     role; 

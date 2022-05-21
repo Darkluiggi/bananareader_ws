@@ -112,11 +112,19 @@ export default {
     AddBook() {
       return this.$router.push("/AddBook");
     },
+      hideLoading() {
+      var x = document.getElementById("loading");
+      x.style.display = "none";
+    },
+    showLoading() {
+      var x = document.getElementById("loading");
+      x.style.display = "flex";
+    },
   },
 
   mounted() {
     this.user = JSON.parse(localStorage.getItem("user"));
-   
+   this.hideLoading();
   },
 };
 </script>

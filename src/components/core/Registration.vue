@@ -13,7 +13,7 @@
   </p>
         
         <v-text-field
-          v-model="user.name"
+          v-model="user.nombre"
           :rules="[(v) => !!v || 'Nombre is required']"
           label="Nombre"
           required
@@ -36,12 +36,6 @@
            @click:append="show1 = !show1"
         ></v-text-field>
 
-        <v-text-field
-          v-model="user.phoneNumber"
-          :rules="[(v) => !!v || 'phone is required']"
-          label="Telefono Celular"
-         
-        ></v-text-field>
       </v-form>
 
       <v-btn color="primary" class="mt-3" @click="checkForm">Submit</v-btn>
@@ -67,7 +61,9 @@
 </template>
 
 <script>
-import user from "../../Entity/User.js"
+import { REGISTER_MUTATION } from "../../constants/graqhql.js";
+import user from "../../Entity/User.js";
+import router from '../../router'
 
 export default {
   name: "add-user",
@@ -84,12 +80,9 @@ export default {
 
   methods: {
     checkForm() {
-      if (this.user.email && this.user.password && this.user.name ) {
-        this.saveUser();
-      }
 
       this.errors = [];
-       if (!this.user.name) {
+       if (!this.user.nombre) {
         this.errors.push('El nombre es obligatorio.');
       }
 
@@ -99,12 +92,46 @@ export default {
       if (!this.user.password) {
         this.errors.push('La contraseña es obligatoria.');
       }
+      if (this.user.email && this.user.password && this.user.nombre ) {
+        this.saveUser();
+      }
 
       
     },
-    saveUser() {
-     
-      this.$router.push({ name: "Home2", params: { reload: true } });
+    getRandomArbitrary(min, max) {
+      var num = (Math.random() * (max - min) + min).toFixed();      
+      return parseInt(num, 10);
+    },
+    hideLoading() {
+      var x = document.getElementById("loading");
+      x.style.display = "none";
+    },
+    showLoading() {
+      var x = document.getElementById("loading");
+      x.style.display = "flex";
+    },
+    saveUser() { 
+      this.$apollo.mutate({
+          mutation: REGISTER_MUTATION,
+          variables: {
+            user_id: this.getRandomArbitrary(0,100),
+            nombre: this.user.nombre,
+            role:'USER',
+            password: this.user.password,
+            email: this.user.email,
+          }
+        }).then(response => {
+          localStorage.user=JSON.stringify(response.data.register);
+          var user_= JSON.parse(localStorage.getItem('user'));
+            if(user_.ok){
+            router.push({ name: "Home2", params: { reload: true } });
+          }
+          else{        
+             this.errors.push(user_.message);  
+          }
+          })
+
+        .catch(e => console.log(e))
     },
 
     newUser() {
@@ -112,6 +139,9 @@ export default {
       this.submitted = false;
       this.user = {};
     },
+  },
+  mounted() {  
+      this.hideLoading();
   },
 };
 </script>

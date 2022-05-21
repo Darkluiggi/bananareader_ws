@@ -35,10 +35,10 @@
                   <v-list-item-icon>
                     <v-icon> mdi-account </v-icon>
                   </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title @click="goToProfile()">{{
-                      this.user.usuario.nombre
-                    }}</v-list-item-title>
+                  <v-list-item-content style="cursor: pointer;">
+                    <v-list-item-title @click="goToProfile()">
+                    {{this.user.usuario.nombre}}
+                    </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>                  
                 <v-list-item>
@@ -68,20 +68,31 @@ export default {
   name: "HeaderBarLinks",
   methods: {
     goToRegistration() {
+      this.showLoading();
       return router.push("/Registration");
     },
     goToLog() {
+      this.showLoading();
       return router.push("/Login");
     },
     goToProfile() {
+      this.showLoading();
       return this.$router.push("/Profile");
     },
-
     signOut() {
+      this.showLoading();
       var user = new User();
       localStorage.user = JSON.stringify(user);
       router.go();
       router.push({ name: "Home2", params: { reload: true } });
+    }, 
+    hideLoading() {
+      var x = document.getElementById("loading");
+      x.style.display = "none";
+    },
+    showLoading() {
+      var x = document.getElementById("loading");
+      x.style.display = "flex";
     },
   },
   mounted() {
