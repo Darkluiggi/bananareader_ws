@@ -50,9 +50,24 @@ mutation ($email: String!, $password: String!) {
   }
 }
 `
+
+export const REGISTER_MUTATION = gql`
+mutation ($email: String!, $password: String!, $user_id: Int!, $nombre: String!, $role: String!) {
+  register(email: $email, password: $password, user_id: $user_id, nombre: $nombre, role :$role) {    
+    ok
+    usuario{
+      nombre
+      email
+      role
+      _id
+      user_id
+    }
+  }
+}
+`
 export const GET_AUTOR_QUERY = gql`
 query  {
-  getAutors(userId: 1) {
+  getAutors() {
     name
   }
 }
