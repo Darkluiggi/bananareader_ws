@@ -50,6 +50,7 @@ export default {
     if (this.$route.params.reload) {
       this.$router.go();
     }
+    console.log(this.user);
     
   },
   methods: {

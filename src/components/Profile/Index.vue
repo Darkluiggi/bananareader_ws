@@ -16,13 +16,13 @@
       <div class="col-md-8">
         <v-col cols="12" md="8">
           <v-text-field
-            v-model="userName"
+            v-model="title"
             label="Buscar por nombre"
           ></v-text-field>
         </v-col>
 
         <v-col cols="12" md="4">
-          <v-btn small @click="searchTitle">
+          <v-btn small>
             Search
           </v-btn>
         </v-col>
@@ -34,23 +34,26 @@
 
             <v-data-table
               :headers="headers"
-              :items="users"
+              :items="readings"
               disable-pagination
               :hide-default-footer="true"
             >
-              <template v-slot:[`item.actions`]="{ item }">
-                <v-icon small class="mr-2" @click="editUser(item.id)"
+              <!-- <template v-slot:[`item.actions`]="{ item }">
+                <v-icon small class="mr-2" @click="editBook(item.id)"
                   >mdi-pencil</v-icon
                 >
-                <v-icon small @click="deleteUser(item.id)">mdi-delete</v-icon>
+                <v-icon small @click="deleteBook(item.id)">mdi-delete</v-icon>
+              </template> -->
+              <template v-slot:[`item.actions`]="{ item }">
+                 <audio id="audio-preview" :src="item.path" controls v-show="file != ''" />
               </template>
             </v-data-table>
           </v-card>
-          
-        <v-btn text style="cursor: pointer" @click="AddBook()">
-          <v-icon>mdi-plus</v-icon>
-          <span>Agregar audiolibro</span>
-        </v-btn>
+
+          <v-btn text style="cursor: pointer" @click="AddBook()">
+            <v-icon>mdi-plus</v-icon>
+            <span>Agregar audiolibro</span>
+          </v-btn>
         </v-col>
       </div>
     </div>
@@ -58,62 +61,79 @@
 </template>
 
 <script>
-import UserDAS from "../../services/UserDAS";
+import { GET_AUDIOS_QUERY, GET_BOOKS_QUERY, GET_READINGS_QUERY } from "../../constants/graqhql";
 export default {
   name: "UserIndex",
+   apollo: {
+    // Simple query that will update the 'hello' vue property
+    getReadings: GET_READINGS_QUERY,
+    getAudio: GET_AUDIOS_QUERY,
+    getBooks: GET_BOOKS_QUERY,
+  },
   data() {
     return {
-      users: [],
-      user: "",
-      userName: "",
+      user:'',
+      title:'',
+      readings: [],
       headers: [
-        { text: "Título", align: "start", sortable: false, value: "nombre" },
-        { text: "Autor(es)", value: "email", sortable: false },
-        { text: "Duración", value: "phoneNumber", sortable: false },
-        { text: "Leido por", value: "status", sortable: false },
+        { text: "Título", align: "start", sortable: false, value: "title" },
+        { text: "Autor(es)", value: "author", sortable: false },
+        { text: "Duración", value: "duration", sortable: false },
+        // { text: "Leido por", value: "status", sortable: false },
         { text: "Acciones", value: "actions", sortable: false },
       ],
     };
   },
   methods: {
-    retrieveList() {
-      UserDAS.getAll()
-        .then((response) => {
-          this.users = response.data.map(this.getUser);
-          console.log(response.data);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+    retrieveList() {     
+    
+      this.readings = this.getReadings;
+      this.readings.forEach(element =>{
+        element.path = this.getAudio.filter(
+          (book) => book.id === element.storage
+        )[0].path;
+          /* eslint-disable no-debugger, no-console */
+        debugger
+        let book =this.getBooks.filter(
+          (book) => 
+          
+          book.id === element.book
+        )[0];
+        element.title = book.title;
+        var autors ='';
+        book.authors.forEach(x=> autors+= ' '+ x.name +' '+ x.surname)
+        element.author = autors;
+
+      });
     },
 
     refreshList() {
       this.retrieveList();
     },
 
-    searchTitle() {
-      UserDAS.findByName(this.userName)
-        .then((response) => {
-          this.users = response.data.map(this.getUser);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    },
+    // searchTitle() {
+    //   UserDAS.findByName(this.userName)
+    //     .then((response) => {
+    //       this.users = response.data.map(this.getUser);
+    //     })
+    //     .catch((e) => {
+    //       console.log(e);
+    //     });
+    // },
 
-    deleteUser(id) {
-      UserDAS.delete(id)
-        .then(() => {
-          this.refreshList();
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    },
+    // deleteUser(id) {
+    //   UserDAS.delete(id)
+    //     .then(() => {
+    //       this.refreshList();
+    //     })
+    //     .catch((e) => {
+    //       console.log(e);
+    //     });
+    // },
     AddBook() {
       return this.$router.push("/AddBook");
     },
-      hideLoading() {
+    hideLoading() {
       var x = document.getElementById("loading");
       x.style.display = "none";
     },
@@ -125,7 +145,10 @@ export default {
 
   mounted() {
     this.user = JSON.parse(localStorage.getItem("user"));
-   this.hideLoading();
+    this.hideLoading();
+     setTimeout(() => {
+       this.refreshList();
+      }, 3000);
   },
 };
 </script>

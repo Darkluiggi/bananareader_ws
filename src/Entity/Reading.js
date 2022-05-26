@@ -1,9 +1,10 @@
-export default class Book {
+export default class Reading {
     id_user;
     id_storage;
     duration;
     chapters;
     language;
     narrators;
-    id_book;   
+    book;   
+    path;
 }

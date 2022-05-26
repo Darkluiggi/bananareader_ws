@@ -1,110 +1,188 @@
 <template>
-<div >
-   <v-btn text style="cursor: pointer" @click="Volver()">
-                <v-icon>mdi-arrow-left-bold</v-icon>
-                <span>Volver</span>
+  <div>
+    <v-btn text style="cursor: pointer" @click="Volver()">
+      <v-icon>mdi-arrow-left-bold</v-icon>
+      <span>Volver</span>
     </v-btn>
-  <div class="submit-form mt-6 mx-auto">
-    <p class="headline">Nuevo Audiolibro</p>
-    
-    <div v-if="!submitted">
-      
-      <v-form ref="form" >
-        <v-text-field
-          v-model="user.name"
-          :rules="[(v) => !!v || 'El nombre es requerido']"
-          label="Titulo"
-          required
-        ></v-text-field>
+    <div class="submit-form mt-6 mx-auto">
+      <p class="headline">Nuevo Audiolibro</p>
 
-        <v-text-field
-          v-model="user.email"
-          :rules="[(v) => v.length > 0 && /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'el email debe ser válido']"
-          label="Sinopsis"
-          required
-        ></v-text-field>
+      <div>
+        <v-form ref="form">
+          <v-select
+            :items="getBooks"
+            :item-text="(item) => `${item.title}`"
+            item-value="id_book"
+            single-line
+            auto
+            v-model="reading.book"
+            label="Seleccionar libro"
+          ></v-select>
 
-        <v-text-field
-          v-model="user.password"
-          type="password"
-          :rules="[(v) => !!v || 'La contraseña es requerida']"
-          label="Año"
-          required
-        ></v-text-field>
-       
-        <v-select :items="autors" item-text="name" item-value="id_autor" 
-        single-line auto v-model="autors.id_autor" label="Seleccionar autor"></v-select>
-      </v-form>
+          <v-text-field
+            v-model="reading.chapters"
+            :rules="[(v) => !!v || 'El número de capítulos es requerido']"
+            label="Capítulos"
+            required
+          ></v-text-field>
 
-      <v-btn color="primary" class="mt-3" @click="saveBook()">Submit</v-btn>
-    </div>
+          <v-text-field
+            v-model="reading.duration"
+            :rules="[(v) => v.length > 0 || 'Por favor ingrese la duración']"
+            label="Duración"
+            id="duration"
+            name="duration"
+            required
+          ></v-text-field>
 
-    <div v-else>
-      <v-card class="mx-auto">
-        <v-card-title>
-          Submitted successfully!
-        </v-card-title>
+          <v-select
+            :items="getNarrators"
+            :item-text="(item) => `${item.name} ${item.surname}`"
+            item-value="id_narrator"
+            single-line
+            auto
+            v-model="reading.narrators"
+            label="Seleccionar narrador"
+          ></v-select>
 
-        <v-card-subtitle>
-          Click the button to add new USer.
-        </v-card-subtitle>
+          <v-select
+            :items="getLanguages"
+            :item-text="(item) => `${item.name}`"
+            item-value="id_language"
+            single-line
+            auto
+            v-model="reading.language"
+            label="Seleccionar lenguaje"
+          ></v-select>
 
-        <v-card-actions>
-          <v-btn color="success" @click="newUser">Add</v-btn>
-        </v-card-actions>
-      </v-card>
+          <input
+            type="file"
+            id="audio"
+            name="audio"
+            accept="audio/mp3 audio/wma"
+            v-on:change="getFiles"
+          />
+          <audio id="audio-preview" controls v-show="file != ''" />
+        </v-form>
+
+        <v-btn color="primary" class="mt-3" @click="saveBook()">Submit</v-btn>
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
-import user from "../../Entity/User.js"
-import gql from 'graphql-tag'
+import Book from "../../Entity/Book.js";
+import Reading from "../../Entity/Reading.js";
+import {
+  GET_LANGUAGES_QUERY,
+  GET_NARRATORS_QUERY,
+  GET_BOOKS_QUERY,
+  REGISTER_MUTATION
+} from "../../constants/graqhql";
+import FileDAS from "../../services/FileDAS";
 
 export default {
-  name: "add-user",  
+  name: "add-reading",
   apollo: {
     // Simple query that will update the 'hello' vue property
-    Autors: gql`{
-          getAutors(userId: 1) {
-           name
-           surname
-          }
-        }      
-    `,
+    getNarrators: GET_NARRATORS_QUERY,
+    getLanguages: GET_LANGUAGES_QUERY,
+    getBooks: GET_BOOKS_QUERY,
   },
   data() {
     return {
-      user: {
-        user
+      audiobook: {
+        Book,
       },
-      autors:[],  
+      reading: {
+        Reading,
+      },
+      files: [],
       select: null,
       submitted: false,
+      duration: 0,
     };
   },
-  // mounted(){ 
-  // },
+  mounted() {
+    this.user = JSON.parse(localStorage.getItem("user"));
+    this.$hideLoading();
+  },
   methods: {
-    saveUser() {
-      var data = {
-        name: this.user.name,
-        email: this.user.email,
-        password: this.user.password,
-        phoneNumber: this.user.phoneNumber,
-        idRol: this.user.idRol,
+    saveBook() {
+      var fileData = {
+        audiobook: this.files[0],
+        audiobookName: this.getBooks.filter(
+          (book) => book.id_book === this.reading.book
+        )[0].title,
       };
-      console.log(data);
-     
-    },
+      FileDAS.create(fileData)
+        .then((response) => {
+          console.log(response.data.id);
+          this.reading.id_storage = response.data.id;
+          this.$apollo
+            .mutate({
+              mutation: REGISTER_MUTATION,
+              variables: {
+                chapters: this.reading.chapters,
+                duration: this.reading.duration,
+                user: this.user.usuario.user_id,
+                language: this.reading.language,
+                narrators: this.reading.narrators,
+                book: this.reading.book,
+                storage: this.reading.id_storage,
+              },
+            })
+            .then((response) => {
+              console.log(response);
+              this.Volver();
+            })
 
-    newUser() {
-      this.submitted = false;
-      this.user = {};
+            .catch((e) => console.log(e));
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+
+      var data = {};
+      console.log(data);
     },
-     Volver(){
+    Volver() {
       return this.$router.push("/Profile");
+    },
+    toHHMMSS: function(timeData) {
+      var sec_num = parseInt(timeData, 10); // don't forget the second param
+      var hours = Math.floor(sec_num / 3600);
+      var minutes = Math.floor((sec_num - hours * 3600) / 60);
+      var seconds = sec_num - hours * 3600 - minutes * 60;
+
+      if (hours < 10) {
+        hours = "0" + hours;
+      }
+      if (minutes < 10) {
+        minutes = "0" + minutes;
+      }
+      if (seconds < 10) {
+        seconds = "0" + seconds;
+      }
+      return hours + ":" + minutes + ":" + seconds;
+    },
+    getFiles(event) {
+      this.files = event.target.files;
+      this.previewAudio(this.files);
+    },
+    previewAudio(files) {
+      let audio = document.getElementById("audio-preview");
+      let reader = new FileReader();
+
+      reader.readAsDataURL(files[0]);
+      reader.addEventListener("load", function() {
+        audio.src = reader.result;
+      });
+      setTimeout(() => {
+        var dur = this.toHHMMSS(audio.duration);
+        this.reading.duration = dur;
+      }, 1000);
     },
   },
 };

@@ -133,12 +133,6 @@ export default {
 
         .catch(e => console.log(e))
     },
-
-    newUser() {
-      
-      this.submitted = false;
-      this.user = {};
-    },
   },
   mounted() {  
       this.hideLoading();
