@@ -23,6 +23,7 @@
             v-model="reading.chapters"
             :rules="[(v) => !!v || 'El número de capítulos es requerido']"
             label="Capítulos"
+            type="number"
             required
           ></v-text-field>
 
@@ -78,7 +79,7 @@ import {
   GET_LANGUAGES_QUERY,
   GET_NARRATORS_QUERY,
   GET_BOOKS_QUERY,
-  REGISTER_MUTATION
+  CREATE_READING_MUTATION
 } from "../../constants/graqhql";
 import FileDAS from "../../services/FileDAS";
 
@@ -122,15 +123,15 @@ export default {
           this.reading.id_storage = response.data.id;
           this.$apollo
             .mutate({
-              mutation: REGISTER_MUTATION,
+              mutation: CREATE_READING_MUTATION,
               variables: {
-                chapters: this.reading.chapters,
+                chapters: parseInt(this.reading.chapters),
                 duration: this.reading.duration,
                 user: this.user.usuario.user_id,
                 language: this.reading.language,
-                narrators: this.reading.narrators,
-                book: this.reading.book,
-                storage: this.reading.id_storage,
+                narrators: [this.reading.narrators],
+                book: parseInt(this.reading.book),
+                storage: parseInt(this.reading.id_storage),
               },
             })
             .then((response) => {

@@ -32,16 +32,13 @@ mutation ($email: String!, $password: String!, $user_id: Int!, $nombre: String!,
 }
 `
 export const CREATE_READING_MUTATION = gql`
-mutation ($user: Int!, $storage: Int!, $duration: String!, $chapters: Int!, $language: Int!, $narrators: list!, $book: Int!) {
-  create_reading(user: $user, storage: $storage, duration: $duration, chapters: $chapters, language :$language, narrators: $narrators, book: $book) {    
-    ok
-    usuario{
-      nombre
-      email
-      role
-      _id
-      user_id
-    }
+mutation ($user: Int!, $storage: Int!, $duration: String!, $chapters: Int!, $language: Int!, $narrators: [Int!], $book: Int!) {
+  createReading(user: $user, storage: $storage, duration: $duration, chapters: $chapters, language :$language, narrators: $narrators, book: $book) {    
+    id_reading
+		user
+    storage
+    duration
+    chapters
   }
 }
 `

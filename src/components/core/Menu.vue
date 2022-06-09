@@ -6,9 +6,9 @@
         @click.stop="drawer = !drawer"
       
       ></v-app-bar-nav-icon>
-      <div class="d-flex align-center" style="cursor: pointer"> 
+      <div class="d-flex align-center" style="cursor: pointer" @click="goToDashboard()"> 
       <img src="../../assets/logo.png" class="logo" />
-      <label class="text-h5">
+      <label class="text-h5" style="cursor: pointer">
                Banana Reader
              </label>
       </div>
@@ -141,12 +141,12 @@ export default {
           rol: ["admin", "Cliente", "Tailor"],
           action: this.goToDashboard,
         },
-        {
-          title: "Usuarios",
-          icon: "mdi-account-box",
-          rol: ["admin" ],
-          action: this.goToUsers,
-        },     
+        // {
+        //   title: "Usuarios",
+        //   icon: "mdi-account-box",
+        //   rol: ["admin" ],
+        //   action: this.goToUsers,
+        // },     
        
       ],
       messages: 1,

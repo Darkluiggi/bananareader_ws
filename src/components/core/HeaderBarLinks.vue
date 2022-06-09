@@ -62,6 +62,7 @@
 
 <script>
 import router from "../../router";
+import { onLogout } from '../../vue-apollo'
 import User from "../../Entity/Auth.js";
 
 export default {
@@ -83,6 +84,7 @@ export default {
       this.showLoading();
       var user = new User();
       localStorage.user = JSON.stringify(user);
+      onLogout(this.$apollo)
       router.go();
       router.push({ name: "Home2", params: { reload: true } });
     }, 

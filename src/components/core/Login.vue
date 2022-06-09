@@ -63,7 +63,8 @@
 <script>
 import router from '../../router';
 // import AuthDAS from '../../services/AuthDAS'
-import { LOGIN_MUTATION } from '../../constants/graqhql'
+import { LOGIN_MUTATION } from '../../constants/graqhql';
+import { onLogin } from '../../vue-apollo'
 
 export default ({
     name: "Login",
@@ -119,6 +120,8 @@ export default ({
 
           localStorage.user=JSON.stringify(response.data.login);
           var user_= JSON.parse(localStorage.getItem('user'));
+          
+          onLogin(user_.token);
             if(user_.ok){
             router.push({ name: "Home2", params: { reload: true } });
           }

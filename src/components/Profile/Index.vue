@@ -14,15 +14,16 @@
         </div>
       </div>
       <div class="col-md-8">
-        <v-col cols="12" md="8">
+        <v-col cols="8" md="8">
           <v-text-field
+          @keyup="searchTitle()"
             v-model="title"
             label="Buscar por nombre"
           ></v-text-field>
         </v-col>
 
-        <v-col cols="12" md="4">
-          <v-btn small>
+        <v-col cols="4" md="4">
+          <v-btn @click="searchTitle()" small>
             Search
           </v-btn>
         </v-col>
@@ -85,19 +86,16 @@ export default {
     };
   },
   methods: {
-    retrieveList() {     
-    
+    retrieveList() {   
+          /*eslint-disable no-debugger*/
+          debugger
       this.readings = this.getReadings;
       this.readings.forEach(element =>{
         element.path = this.getAudio.filter(
           (book) => book.id === element.storage
         )[0].path;
-          /* eslint-disable no-debugger, no-console */
-        debugger
         let book =this.getBooks.filter(
-          (book) => 
-          
-          book.id === element.book
+          (book) => book.id === element.book
         )[0];
         element.title = book.title;
         var autors ='';
@@ -105,21 +103,27 @@ export default {
         element.author = autors;
 
       });
+      this.readings = this.readings.filter((reading) => reading.user === this.user.usuario.user_id);
     },
 
     refreshList() {
       this.retrieveList();
     },
 
-    // searchTitle() {
-    //   UserDAS.findByName(this.userName)
-    //     .then((response) => {
-    //       this.users = response.data.map(this.getUser);
-    //     })
-    //     .catch((e) => {
-    //       console.log(e);
-    //     });
-    // },
+    searchTitle() {
+      this.showLoading();
+     var title = this.title;
+     this.readings = this.getReadings;
+     if(title != ''){
+      this.readings = this.readings.filter((reading) => 
+      reading.title.toUpperCase().includes(title.toUpperCase())
+      );
+     }
+     else{
+       this.refreshList();
+     }
+     this.hideLoading();
+    },
 
     // deleteUser(id) {
     //   UserDAS.delete(id)
@@ -144,11 +148,11 @@ export default {
   },
 
   mounted() {
-    this.user = JSON.parse(localStorage.getItem("user"));
-    this.hideLoading();
+    this.user = JSON.parse(localStorage.getItem("user"));    
      setTimeout(() => {
        this.refreshList();
       }, 3000);
+      this.hideLoading();
   },
 };
 </script>
